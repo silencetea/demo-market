@@ -14,7 +14,7 @@
 	],
 	"content_scripts": [  
 		{  
-			"matches": ["*://open.10jqka.com.cn/clouds/*", "http://localhost:3000/clouds/*"],  
+			"matches": ["*://xxx.com/xxx/*"],  
 			"js": ["content.js"]  
 		}  
 	] 
