@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta title="author" name="Silence Xu">
+	<title>焦点轮播图</title>
+</head>
+<style type="text/css">
+#container{
+	margin: 0 auto;
+	width: 600px;
+	height: 400px;
+	overflow: hidden;
+	position: relative;/*将图片放到container里，多余的overflow: hidden;*/
+}
+#container #list{
+	position: absolute; 
+	width: 4200px; 
+	height: 400px; 
+	font-size: 0px;/*消除img之间的空隙*/
+	z-index: 1;
+}
+#container #list img{
+	float: left;
+}
+#container #buttons{
+	width: 100px;
+	height: 10px;
+	position: absolute;
+	left: 250px;
+	bottom: 20px;
+	z-index: 2;
+
+}
+#container #buttons span{
+	display: block;
+	float: left;
+	width: 6px;
+	height: 6px;
+	background: #567;
+	border:2px solid #fff;
+	border-radius: 50%;
+	cursor: pointer;
+	margin-right: 5px;
+
+}
+#container #buttons .on{
+	background: #9ea;
+}
+#container .arrow{
+	display: none;
+	width: 30px;
+	height: 50px;
+	background: rgba(0,0,0,0.3);
+	cursor: pointer;
+	font-size: 36px;
+	text-align: center;
+	line-height: 50px;
+	color: #dfd;
+	position: absolute;
+	top: 175px;
+	z-index: 2;
+
+}
+#container .arrow:hover{
+	background: rgba(0,0,0,0.5);
+	color: #fff;
+}
+#container:hover .arrow{
+	display: block;
+}
+#prev{ left: 20px; }
+#next{ right: 20px; }
+</style>
+<body>
+<div id="container">
+	<div id="list" style="left:-600px;">
+		<img src="img/slide7.jpg">
+		<img src="img/slide1.jpg">
+		<img src="img/slide2.jpg">
+		<img src="img/slide5.jpg">
+		<img src="img/slide6.jpg">
+		<img src="img/slide7.jpg">
+		<img src="img/slide1.jpg">
+	</div>
+	<div id="buttons">
+		<span index="1" class="on"></span>
+        <span index="2"></span>
+        <span index="3"></span>
+        <span index="4"></span>
+        <span index="5"></span>
+	</div>
+	<span id="prev" class="arrow">&lt;</span>
+    <span id="next" class="arrow">&gt;</span>
+		
+</div>
+</body>
+<script>
+window.onload = function(){
+	var oContainer = document.getElementById("container");
+	var oList = document.getElementById("list");
+	var oButtons = document.getElementById("buttons").getElementsByTagName("span");
+	var oPrev = document.getElementById("prev");
+	var oNext = document.getElementById("next");
+
+	var index = 1;	//当前是第几张图
+	var len = 5;	//当前有几张图片
+
+	var animated = false;	//当left改变时，animated为true，当left结束改变，animated为false，防止点击前进后退按钮频率过快时产生卡顿
+	var interval = 3000;
+	var timer;
+
+	function animate(offset){
+		if(offset==0){
+			return;//退出这个函数
+		}
+		animated = true;
+		var time = 300;  //换图时间
+		var inteval = 10;	//改变left的时间间隔
+		var speed = offset/(time/inteval);
+
+		var left = parseInt(oList.style.left) + offset;
+
+		var go = function(){
+			//speed>0 =>  offset>0  => offset改变的像素位,+为向左（前）移动，-向右（后）移动  => left为改变后的oList.style.left值
+			if( (speed > 0 && parseInt(oList.style.left) < left) || (speed < 0 && parseInt(oList.style.left) > left)){
+				oList.style.left = parseInt(oList.style.left) + speed +'px';
+				setTimeout(go,inteval);
+			}
+			else{
+				oList.style.left = left + 'px';
+				
+				if(left > -600){
+					oList.style.left = -600 * len + 'px';
+				}
+				if(left < (-600 * len)){
+					oList.style.left = -600 + 'px';
+				}
+				animated = false;
+			}
+		}
+		go();
+
+
+	}
+
+	function showButton(){
+		for(var i=0; i<oButtons.length; i++){
+			if(oButtons[i].className == 'on'){
+				oButtons[i].className = '';
+				break;
+			}
+		}
+		oButtons[index - 1].className = 'on';
+	}
+
+	//自动改变图片
+	function play(){
+		timer = setTimeout(function(){
+			next.onclick();
+			play();
+		},interval);
+	}
+	//当鼠标放上去时停止改变图片
+	function stop(){
+		clearTimeout(timer);
+	}
+
+	oPrev.onclick = function(){
+		if(animated){
+            return;
+        }
+		if(index == 1){
+			index =5;
+		}
+		else{
+			index -= 1;
+		}
+		animate(600);
+		showButton();
+	}
+	oNext.onclick = function(){
+		if(animated){
+            return;
+        }
+		if(index == 5){
+			index =1;
+		}
+		else{
+			index += 1;
+		}
+		animate(-600);
+		showButton();
+	}
+	for(var i=0; i<oButtons.length; i++){
+		oButtons[i].onclick = function(){
+			if(animated){
+                return;
+            }
+			if(this.className == 'on'){
+				return;
+			}
+		debugger;
+
+			var myIndex = parseInt(this.getAttribute('index'));
+			var offset = -600 * (myIndex - index);
+					
+			if(myIndex == 1 && index == 5){
+				offset = -600;
+			}
+			if(myIndex == 5 && index == 1){
+				offset = 600;
+			}
+
+			animate(offset);
+			index = myIndex;
+			showButton();
+		}
+	}
+	oContainer.onmouseover = stop;
+	oContainer.onmouseout = play;
+
+	play();
+}
+</script>
+</html>
