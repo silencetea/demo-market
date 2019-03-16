@@ -1,0 +1,37 @@
+canvas{
+	margin:20px auto;
+	display: block;
+	box-shadow: -2px -2px 2px #efefef,
+				5px 5px 5px #b9b9b9;
+}
+
+.control{
+	margin:auto;
+	width: 424px;
+}
+
+.control input{
+	width: 90px;
+	height: 30px;
+	margin:0 5px;
+	border:1px solid #456;
+	background-color: #fea;
+	border-radius: 10px;
+	font-size: 14px;
+	color:#4e4e4e;
+}
+.control input:hover{
+	font-weight: bold;
+	border:2px solid;
+}
+
+/* 游戏介绍 */
+.gameDescription-div{
+	width: 450px;
+	height: 450px;
+	border:1px solid #fea;
+	box-shadow: -2px -2px 2px #efefef,
+				5px 5px 5px #b9b9b9;
+	display: none;
+}
+

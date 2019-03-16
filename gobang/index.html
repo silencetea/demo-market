@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<meta title="author" name="Silence Xu">
+	<title>五子棋</title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+
+</head>
+<body>
+<div style="margin-left: 15%; width: 600px;">
+
+	<div class="control">
+		<input type="button" class="gameDescription" id="gameInstructions" value="游戏介绍" />
+		<div class="gameDescription-div">
+			<p>五子棋小游戏</p>
+		</div>
+		<input type="button" class="gameDescription" id="gameRules" value="游戏规则" />
+		<div class="gameDescription-div">
+			<h3>游戏规则</h3>
+			<h4>游戏分为三种类型：</h4>
+			<h5>一人娱乐</h5>
+			<h5>人人对战</h5>
+			<h5>人机对战</h5>
+		</div>
+	</div>
+
+	<canvas id="chess" width="450px" height="450px"></canvas>
+
+	<div class="control">
+		<input type="button" id="one-oneself" value="一人娱乐" />
+		<input type="button" id="people-people" value="人人对战" />
+		<input type="button" id="people-computer" value="人机对战" />
+		<input type="button" id="another" value="再来一局" />
+	</div>
+
+</div>
+</body>
+<script src="js/script.js"></script>
+
+</html>
