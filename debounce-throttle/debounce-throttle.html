@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>节流和防抖</title>
+	<style type="text/css">
+		* {
+			font-size: 14px;
+			font-family: "weiruanyahei"
+		}
+		body {
+			padding: 20px;
+		}
+		.rescontent {
+			padding: 10px 0 40px;
+		}
+	</style>
+</head>
+<body>
+
+	<div>
+		普通：<input id="normal" placeholder="普通" />
+	</div>
+	<div class="rescontent">
+		打印普通未处理时触发输入框输入的ajax请求：
+		<div id="normal_res"></div>
+	</div>
+
+	<div>
+		防抖：<input id="debounce" placeholder="防抖" />
+	</div>
+	<div class="rescontent">
+		打印防抖后的ajax请求：
+		<div id="debounce_res"></div>
+	</div>
+	
+	<div>
+		节流：<input id="throttle" placeholder="节流" />
+	</div>
+	<div class="rescontent">
+		打印节流后的ajax请求：
+		<div id="throttle_res"></div>
+	</div>
+</body>
+</html>
+
+<script type="text/javascript">
+	// 模拟一段ajax请求
+	function ajax(content, elem) {
+	  console.log('ajax request ' + content)
+	  elem.innerHTML += 'ajax request ' + content + '<br />'
+	}
+
+	// 普通的输入框
+	let inputNormal = document.getElementById('normal');
+	inputNormal.addEventListener('keyup', function (e) {
+	    ajax(e.target.value, document.getElementById('normal_res'))
+	})
+
+	// 函数防抖(debounce)
+	// 在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时。
+	// 比喻：函数防抖就是法师发技能的时候要读条，技能读条没完再按技能就会重新读条。
+
+	function debounce(fun, delay) {
+	    return function (args1, args2) {
+	        let that = this
+	        let _args1 = args1
+	        let _args2 = args2
+	        clearTimeout(fun.id)
+	        fun.id = setTimeout(function () {
+	            fun.call(that, _args1, _args2)
+	        }, delay)
+	    }
+	}
+	    
+	let inputDebounce = document.getElementById('debounce')
+
+	let debounceAjax = debounce(ajax, 500)
+
+	inputDebounce.addEventListener('keyup', function (e) {
+        debounceAjax(e.target.value, document.getElementById('debounce_res'))
+    })
+
+
+	// 函数节流(throttle)
+	// 规定在一个单位时间内，只能触发一次函数。如果这个单位时间内触发多次函数，只有一次生效。
+	// 比喻：函数节流就是fps游戏的射速，就算一直按着鼠标射击，也只会在规定射速内射出子弹。
+	function throttle(fun, delay) {
+        let last, deferTimer
+        return function (args) {
+            let that = this
+            let _args = arguments
+            let now = +new Date()
+            if (last && now < last + delay) {
+                clearTimeout(deferTimer)
+                deferTimer = setTimeout(function () {
+                    last = now
+                    fun.apply(that, _args)
+                }, delay)
+            }else {
+                last = now
+                fun.apply(that,_args)
+            }
+        }
+    }
+
+    let throttleAjax = throttle(ajax, 1000)
+
+    let inputThrottle = document.getElementById('throttle')
+    inputThrottle.addEventListener('keyup', function(e) {
+        throttleAjax(e.target.value, document.getElementById('throttle_res'))
+    })
+
+/*
+总结
+函数防抖和函数节流都是防止某一时间频繁触发，但是这两兄弟之间的原理却不一样。
+函数防抖是某一段时间内只执行一次，而函数节流是间隔时间执行。
+
+
+结合应用场景
+debounce
+search搜索联想，用户在不断输入值时，用防抖来节约请求资源。
+window触发resize的时候，不断的调整浏览器窗口大小会不断的触发这个事件，用防抖来让其只触发一次
+
+throttle
+鼠标不断点击触发，mousedown(单位时间内只触发一次)
+监听滚动事件，比如是否滑到底部自动加载更多，用throttle来判断
+
+*/
+
+</script>
