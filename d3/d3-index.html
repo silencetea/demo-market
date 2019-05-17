@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>d3 test</title>
+	<style>
+		body {
+			font: 10px sans-serif;
+			margin: 0;
+			padding: 0;
+		}
+		.d3-popover {
+			max-width: 200px;
+			position: absolute; 
+			z-index: 99999;
+			background-color: rgba(0, 0, 0, 0.5); 
+			border-color: rgb(51, 51, 51); 
+			border-style: solid; 
+			border-width: 0px; 
+			border-radius: 5px; 
+			padding: 5px; 
+			color: white; 
+			display: none; 
+			left: 278px; 
+			top: 235px; 
+			word-wrap: break-word;
+			white-space: pre-wrap;
+		}
+
+		/* Creates a small triangle extender for the popover */
+		/* .d3-popover:after {
+			box-sizing: border-box;
+			display: inline;
+			font-size: 10px;
+			width: 200px;
+			line-height: 1;
+			color: rgba(0, 0, 0, 0.6);
+			content: "\25BC";
+			position: absolute;
+			top: 20px;
+			left: calc(50% - 20px)
+			text-align: center;
+		} */
+	</style>
+</head>
+<body>
+	<div style="position: relative;">
+		<svg id="d3_svg" width="960" height="960" font-family="sans-serif" font-size="14" text-anchor="middle" style="border: 1px solid red;"></svg>
+		<div class="d3-popover" style="">
+		1234
+	</div>
+	</div>
+
+	
+</body>
+<!-- <script src="https://cdn.bootcss.com/d3-hierarchy/1.1.5/d3-hierarchy.js"></script> -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+// DOM = document.getElementsByTagName('svg')[0];
+let data =  {
+	name: "flare",
+ 	type: 'arsenal',
+	children: [
+		{
+		 	name: "analytics",   
+		 	children: [
+				{name: "cluster", type: 'production', children: [
+					{name: '1233'},
+					{name: '1234'},
+					{name: '1235'},
+				]},
+				{name: "graph", children: [
+					{name: '1233'},
+					{name: '1234'},
+					{name: '1235'},
+				]},
+				{name: "optimization", children: [
+					{name: '1233'},
+					{name: '1234'},
+					{name: '1235'},
+				]}
+			]
+		},
+		{
+		 	name: "analytics1",   
+		 	children: [
+				{name: "cluster1", children: [
+					{name: '1233'},
+					{name: '1234'},
+					{name: '1235'},
+				]},
+				{name: "graph1", children: [
+					{name: '1233'},
+					{name: '1234'},
+					{name: '1235'},
+				]},
+				{name: "optimization1", children: [
+					{name: '1233'},
+					{name: '1234'},
+					{name: '1235'},
+					{name: '1233', type: 'app', children: [{name: 'test', type: 'service', children: [{name: 'test2', type: 'component'}]}]},
+				]}
+			]
+		}
+	]
+}
+/*for(let i=0; i<45; i++) {
+	data.children.push({
+  	 	name: "analytics" + i,   
+  	 	children: [
+	  		{name: "cluster" + i, 
+  	 		type: 'production',
+	  		children: [
+	  			{name: '1234'},
+	  			{name: '1235'},
+	  		]},
+	  		{name: "graph" + i, children: [
+	  			{name: '1233'},
+	  			{name: '1234'},
+	  			{name: '1235'},
+	  		]},
+	  		{name: "optimization" + i, children: [
+	  			{name: '1233'},
+	  			{name: '1234'},
+	  			{name: '1235'},
+	  		]}
+		]
+	})
+}
+for(let i=0; i<20; i++) {
+	data.children[0].children.push({
+  	 	name: "analytics" + i,   
+  	 	children: [
+	  		{name: "cluster" + i, children: [
+	  			{name: '1233', type: 'app', children: [{name: 'test', type: 'app', children: [{name: 'test2', type: 'service'}]}]},
+	  			{name: '1233'},
+	  			{name: '1234'},
+	  			{name: '1235'},
+	  		]},
+	  		{name: "graph" + i, children: [
+	  			{name: '1234'},
+	  			{name: '1235'},
+	  		]},
+	  		{name: "optimization" + i, children: [
+	  			{name: '1233'},
+	  			{name: '1234'},
+	  			{name: '1234'},
+	  			{name: '1234'},
+	  			{name: '1235'},
+	  		]}
+		]
+	})
+}*/
+
+	
+
+
+const nodeMouseover = (d, i, nodes) => {
+	// console.log('nodeMouseover', d3.select(nodes[i]), d3.select(i));
+	console.log(d3.select('#d3_hover_'+ i));
+	let popover = d3.select('.d3-popover');
+	console.log(popover);
+	let html = `${d.data.name}45454545454544545454545454`;
+	if(popover._groups[0][0]) {  // 判断popover是否存在，若存在，修改display
+		popover.html(html);
+		/*popover.style("display", "block")
+		popover.style("top", () => {
+			return Math.round(pos[1])
+		})
+		popover.style("left", () => {
+			return Math.round(pos[0])
+		})*/
+		popover.attr('style', () => {
+			let pos = d3.mouse(document.getElementsByTagName('svg')[0])
+			return `display: block;position: absolute; top: ${pos[1]}; left: ${pos[0]}`
+		})
+
+	} else {  // popover不存在，创建一个
+		/*console.log('create')
+		d3.select(nodes[i])
+
+		.append("svg:g")
+		.attr("id", "d3_popover_" + i)
+		.attr("transform", d => {
+			return `
+				rotate(${-(d.x * 180 / Math.PI - 90)})
+				translate(20,20)
+			`
+		})
+		// .classed("d3-popover", true)
+		.html(function(d) {
+			let anchor = d.x < Math.PI === !d.children ? "end" : "middle";
+			return `<g>
+			<a xlink:href="/views/${d.data.id}" target="_blank" class='d3-popover'>
+			<text style='color:orangered'>${d.data.name}45454545454544545454545454</text>
+			</a>
+			</g>`;
+		})
+		.attr("dy", "0.31em")
+		.attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+		.attr("text-anchor", d => d.x < Math.PI === !d.children ? "end" : "start");*/
+
+		/*.append("svg:rect")
+		.attr("stroke", d3.rgb(31, 120, 180))
+		.style('fill', "transparent")
+		.classed("d3-popover", true)
+		.append("svg:g")
+		.append('svg:text')
+		.style("box-sizing", "border-box")
+		.attr("dy", "0.31em")
+		.attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+		.attr("text-anchor", d => d.x < Math.PI === !d.children ? "end" : "start")
+		.style('fill', d3.rgb(31, 120, 180))
+		.text(d => d.data.name + i)
+		.filter(d => d.children)*/
+		// .clone(true).lower()
+		// .attr("stroke", "red");
+	}
+}
+const nodeMouseleave = (d, i, nodes) => {
+	// console.log('nodeMouseleave', d3.select('#d3_hover_'+ i));
+	// console.log(d3.select('#d3_hover_'+ i));
+	d3.select('.d3-popover').style("display", "none")  // 隐藏popover
+}
+const initd3 = (data) => {
+	const width = 932
+	const radius = (width/3) *2
+	console.log(d3)
+	const tree = d3.cluster().size([2 * Math.PI, radius - 100])
+
+	console.log(d3.hierarchy(data))
+	// chart = {
+	const root = tree(d3.hierarchy(data)
+		.sort((a, b) => (a.height - b.height) || a.data.name.localeCompare(b.data.name)));
+
+	const svg = d3.select('svg') // d3.select(DOM.svg(width, width))
+		.style("width", width)
+		.style("height", "auto")
+		.style("padding", "10px")
+		.style("box-sizing", "border-box")
+		.style("font", "10px sans-serif");
+	/*svg.append('svg:image')
+		.attr({
+			'xlink:href': './icon_prod.png',  // can also add svg file here
+			x: 0,
+			y: 0,
+			width: 128,
+			height: 128
+		}); */
+
+	const g = svg.append("svg:g");
+
+	const link = g.append("svg:g")
+		.attr("fill", "none")
+		.attr("stroke", "#555")
+		.attr("stroke-opacity", 0.4)
+		.attr("stroke-width", 1.5)
+		.selectAll("path")
+		.data(root.links())
+		.enter().append("path")
+		.attr("d", d3.linkRadial()
+		.angle(d => d.x)
+		.radius(d => d.y));
+	  
+	const node = g.append("svg:g")
+		.attr("stroke-linejoin", "round")
+		.attr("stroke-width", 3)
+		.selectAll("g")
+		.data(root.descendants().reverse())
+		.enter().append("g")
+		.style('position', 'relative')
+		.attr("transform", d => `
+			rotate(${d.x * 180 / Math.PI - 90})
+			translate(${d.y},0)
+		`)
+		.attr('y', function(d) { return d.y })
+		.attr('x', function(d, i) { return d.x })
+	    .on('mouseover', nodeMouseover)
+	    .on('mouseleave', nodeMouseleave);
+	  
+	/*node.append("svg:circle")
+		.attr("fill", d => {
+			let nodeColor = '#666';
+			let type = d.data.type;
+			if(type === 'production') {
+				nodeColor = 'red';
+			} else if(type === 'app') {
+				nodeColor = 'purple';
+			} else if(type === 'component') {
+				nodeColor = 'blue';
+			} else if(type === 'service') {
+				nodeColor = 'orange';
+			} else if(type === 'arsenal') {
+				nodeColor = 'green'
+			}
+			// nodeColor = 'transparent'
+			return nodeColor
+		})
+		.attr('border', '1px solid #red')
+		.attr("r", 30);*/
+	  
+	  
+	  //背景图片
+	node.append("svg:circle")
+		.attr("r", 30)
+		.attr("fill", "transparent")
+		.append("img")
+		.attr("x", 10)
+		.attr("y", 10)
+		.attr("width",26)
+		.attr("height", 26)
+		.attr('href', './icon_prod.png');
+
+		console.log(node)
+
+
+
+	node.append("svg:image")
+	    .attr("xlink:href",  function(d) { 
+	    	let type = d.data.type;
+	    	let nodeImg = '';
+			if(type === 'production') {
+				nodeImg = './icon_prod.png';
+			} else if(type === 'app') {
+				nodeImg = './icon_app.png';
+			} else if(type === 'component') {
+				nodeImg = './icon_com.png';
+			} else if(type === 'service') {
+				nodeImg = './icon_service.png';
+			} else if(type === 'arsenal') {
+				nodeColor = './icon_prod.png'
+			} else {
+				nodeImg = '';
+			}
+	    	return nodeImg;
+	    })
+	    .attr("x", function(d) { return -25;})
+	    .attr("y", function(d) { return -25;})
+	    .attr("height", 50)
+	    .attr("width", 50);
+
+	  
+	node.append("svg:text")
+		.attr("dy", "0.31em")
+		.attr("x", d => d.x < Math.PI === !d.children ? 6 : -6)
+		.attr("text-anchor", d => d.x < Math.PI === !d.children ? "start" : "end")
+		.attr("transform", d => d.x >= Math.PI ? "rotate(180)" : null)
+		.text(d => d.data.name)
+		.filter(d => d.children)
+		.clone(true).lower()
+		.attr("stroke", "white");
+
+	const box = g.node().getBBox();
+
+	svg.remove()
+		.attr("width", box.width)
+		.attr("height", box.height)
+		.attr("viewBox", `${box.x} ${box.y} ${box.width} ${box.height}`);
+
+	svg.node();
+	  
+	document.body.appendChild(svg.node());
+
+
+}
+
+	
+
+
+initd3(data);
+	
+// }
+
+</script>
+</html>

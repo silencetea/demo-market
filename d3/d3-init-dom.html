@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>d3-init-dom</title>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+</head>
+<body>
+	
+</body>
+<script type="text/javascript">
+	const width = 800;
+	const radius = width/2;
+	console.log(d3.select('body').append('svg'))
+	const svg = d3.select('body').append('svg')
+      .style("width", width)
+      .style("height", "auto")
+      .style("padding", "10px")
+      .style("box-sizing", "border-box")
+      .style("font", "10px sans-serif");
+
+    document.body.appendChild(svg.node());
+</script>
+</html>
